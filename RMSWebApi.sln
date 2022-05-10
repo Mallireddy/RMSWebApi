@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RMSWebApi", "RMSWebApi\RMSWebApi.csproj", "{0B527439-F440-48EE-8924-03839BE7DE56}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0B527439-F440-48EE-8924-03839BE7DE56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B527439-F440-48EE-8924-03839BE7DE56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B527439-F440-48EE-8924-03839BE7DE56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B527439-F440-48EE-8924-03839BE7DE56}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5C805B52-ACBB-4303-96E3-BEC5279CE152}
+	EndGlobalSection
+EndGlobal
