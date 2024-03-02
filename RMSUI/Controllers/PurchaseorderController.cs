@@ -11,6 +11,10 @@ namespace RMSUI.Controllers
         {
             return View();
         }
+        /// <summary>
+        /// This method used for getting the purchaseorder details
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> Purchaseordergetall()
         {
             using (var client = new HttpClient())
