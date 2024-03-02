@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RMSWebApi.RepoImplement;
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace RMSWebApi.Controllers
 {
@@ -14,32 +16,68 @@ namespace RMSWebApi.Controllers
             unitOfWork = uw;
         }
         [HttpGet]
-        public List<PurchaseOrderDTO> GetAll()
+        [Route("GetAllPurchaseOrders")]
+        public List<PurchaseOrderDTO> GetAllPurchaseOrders()
         {
-            return unitOfWork.PurchaseOrderRepo.GetAll();
-
+            try
+            {
+                return unitOfWork.PurchaseOrderRepo.GetAll();
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+        [HttpGet]
+        [Route("GetByPurchaseOrdersId")]
+        public PurchaseOrderDTO GetByPurchaseOrdersId(int id)
+        {
+            return unitOfWork.PurchaseOrderRepo.GetById(id);
         }
         [HttpPost]
-        public bool AddRecord(PurchaseOrderDTO Record)
+        [Route("AddPurchaseOrders")]
+        public bool AddPurchaseOrders(PurchaseOrderDTO Record)
         {
-            unitOfWork.PurchaseOrderRepo.AddRecord(Record);
-            bool Success = unitOfWork.SaveAll();
-            return Success;
+            try
+            {
+                unitOfWork.PurchaseOrderRepo.UpdateRecord(Record);
+                bool success = unitOfWork.SaveAll();
+                return success;
+            }catch (Exception ex)
+            {
+                throw;
+            }
         }
-        [HttpDelete]
-        public bool DeleteRecord(int id)
+        [HttpPost]
+        [Route("DeletePurchaseOrders")]
+        public bool DeletePurchaseOrders(int id)
         {
-            unitOfWork.PurchaseOrderRepo.DeleteRecord(id);
-            bool Success = unitOfWork.SaveAll();
-            return Success;
-
+            try
+            {
+                unitOfWork.PurchaseOrderRepo.DeleteRecord(id);
+                bool Success = unitOfWork.SaveAll();
+                return Success;
+            }
+            catch(Exception ex)
+            {
+                throw ;
+            }
         }
-        [HttpPut]
-        public bool UpdateRecord(PurchaseOrderDTO Record)
+        [HttpPost]
+        [Route("UpdatePurchaseOrders")]
+        public async Task<IActionResult> UpdatePurchaseOrders(PurchaseOrderDTO Record)
         {
-            unitOfWork.PurchaseOrderRepo.UpdateRecord(Record);
-            bool success = unitOfWork.SaveAll();
-            return success;
+            try
+            {
+                unitOfWork.PurchaseOrderRepo.UpdateRecord(Record);
+                bool success = unitOfWork.SaveAll();
+                //return success;
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                throw ;
+            }
         }
     }
 }

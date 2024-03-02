@@ -10,8 +10,8 @@ using RMSWebApi;
 namespace RMSWebApi.Migrations
 {
     [DbContext(typeof(MyAppDbContext))]
-    [Migration("20220509071708_InItSCBDataTblCreate")]
-    partial class InItSCBDataTblCreate
+    [Migration("20231114134343_Retailmstables")]
+    partial class Retailmstables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

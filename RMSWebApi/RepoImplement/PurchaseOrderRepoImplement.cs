@@ -26,9 +26,9 @@ namespace RMSWebApi.RepoImplement
                 };
                 context.PurchaseOrders.Add(Pors);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                return false;
+                throw;
             }
             return true;
         }
@@ -45,44 +45,62 @@ namespace RMSWebApi.RepoImplement
                 }
                 return false;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                return false;
+                throw;
             }
         }
 
         public List<PurchaseOrderDTO> GetAll()
         {
-            var res = (from obj in context.PurchaseOrders
-                       join Bobj in context.BooKs on obj.BookId equals Bobj.BookId
-                       select new PurchaseOrderDTO()
-                       {
-                          PurchaseOrderId=obj.PurchaseOrderId,
-                          BookId=obj.BookId,
-                          BookTitle = obj.BookTitle,
-                          Quantity = obj.Quantity,
-                          Price=obj.Price,
-                          TotalOrderPrice = obj.TotalOrderPrice,    
-                       }).ToList();
-            return res;
+            try
+            {
+                var res = (from obj in context.PurchaseOrders
+                           join Bobj in context.BooKs on obj.BookId equals Bobj.BookId
+                           select new PurchaseOrderDTO()
+                           {
+                               PurchaseOrderId = obj.PurchaseOrderId,
+                               BookId = obj.BookId,
+                               BookTitle = obj.BookTitle,
+                               Quantity = obj.Quantity,
+                               Price = obj.Price,
+                               TotalOrderPrice = obj.TotalOrderPrice,
+                               Genres = obj.Genres,
+                           }).ToList();
+                return res;
+            }
+            catch(Exception ex)
+            {
+                throw;
+            }
         }
 
         public PurchaseOrderDTO GetById(int id)
         {
-            PurchaseOrderDTO purchaseOrderDTO=new PurchaseOrderDTO();
-            var Purchase=(from obj in context.PurchaseOrders
-                         where obj.PurchaseOrderId==id select obj).FirstOrDefault();
-            if (Purchase != null)
+            try
             {
-                purchaseOrderDTO.PurchaseOrderId = Purchase.PurchaseOrderId;
-                purchaseOrderDTO.BookId=Purchase.BookId;
-                purchaseOrderDTO.BookTitle=Purchase.BookTitle;
-                purchaseOrderDTO.Quantity=Purchase.Quantity;
-                purchaseOrderDTO.Price=Purchase.Price;
-                purchaseOrderDTO.TotalOrderPrice = Purchase.TotalOrderPrice;
+                PurchaseOrderDTO purchaseOrderDTO = new PurchaseOrderDTO();
+                var Purchase = (from obj in context.PurchaseOrders
+                                where obj.PurchaseOrderId == id
+                                select obj).FirstOrDefault();
+                if (Purchase != null)
+                {
+                    purchaseOrderDTO.PurchaseOrderId = Purchase.PurchaseOrderId;
+                    purchaseOrderDTO.BookId = Purchase.BookId;
+                    purchaseOrderDTO.BookTitle = Purchase.BookTitle;
+                    purchaseOrderDTO.Quantity = Purchase.Quantity;
+                    purchaseOrderDTO.Price = Purchase.Price;
+                    purchaseOrderDTO.TotalOrderPrice = Purchase.TotalOrderPrice;
+                    return purchaseOrderDTO;
+                }
                 return purchaseOrderDTO;
             }
-            return purchaseOrderDTO;
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+
         }
 
         public bool UpdateRecord(PurchaseOrderDTO Record)
@@ -98,9 +116,9 @@ namespace RMSWebApi.RepoImplement
                 }
                 return false;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                return false;
+                throw;
             }
         }
     }

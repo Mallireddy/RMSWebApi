@@ -2,7 +2,7 @@
 
 namespace RMSWebApi.Migrations
 {
-    public partial class InItSCBDataTblCreate : Migration
+    public partial class Retailmstables : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

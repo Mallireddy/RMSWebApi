@@ -14,35 +14,19 @@ namespace RMSWebApi.RepoImplement
         {
             context = ctx;
         }
-       /* public ProductRepoImplement ProductRepo
-        {
-            get
-            {
-                 if(productRepo == null)
-                {
-                    productRepo = new ProductRepoImplement(context);
-                } 
-                 return productRepo;
-            }
-        }
-        public OrderRepoImplement OrderRepo
-        {
-            get
-            {
-                if (orderRepo == null)
-                {
-                    orderRepo = new OrderRepoImplement(context);
-                }
-                return orderRepo;
-            }
-        }*/
         public PurchaseOrderRepoImplement PurchaseOrderRepo
         {
             get
             {
-                if (purchaseOrderRepo == null)
+                try
                 {
-                    purchaseOrderRepo = new PurchaseOrderRepoImplement(context);
+                    if (purchaseOrderRepo == null)
+                    {
+                        purchaseOrderRepo = new PurchaseOrderRepoImplement(context);
+                    }
+                }catch (Exception ex)
+                {
+                    throw;
                 }
                 return purchaseOrderRepo;
             }
@@ -54,9 +38,9 @@ namespace RMSWebApi.RepoImplement
                 context.SaveChanges();  
                 return true;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-               return false;    
+                throw;  
             }
         }
     }

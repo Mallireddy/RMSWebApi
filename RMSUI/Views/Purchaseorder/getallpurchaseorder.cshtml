@@ -1,0 +1,101 @@
+﻿@{
+    Layout = "~/Views/Shared/_TempLayout.cshtml";
+}
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css">
+</head>
+<body>
+    <div class="container">
+        <h3>Purchaseorders</h3>
+
+        <table class="table table-bordered" id="tablepurchaseorder">
+            <thead>
+                <tr class="table-primary">
+                    <td>BookTitle</td>
+                    <td>Bookgeneration</td>
+                    <td>Quantity</td>
+                    <td>Price</td>
+                    <td>TotalOrderPrice</td>
+                    <td>Status</td>
+                    <td>Action</td>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+
+        </table>
+
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+     <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+   
+</body>
+<script>
+        $(document).ready(function () {
+            debugger;
+            GetPurchase();
+        });
+
+        function GetPurchase() {
+            debugger;
+            // Use jQuery AJAX to make a GET request
+            $.ajax({
+                url: 'Purchaseordergetall',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    debugger;
+                    console.log('Successfully fetched data:', response);
+
+                  $('#tablepurchaseorder').DataTable({
+                  data: response,
+                     columns: [
+                     { data: 'bookTitle'},
+                     { data: 'genres'},
+                     { data: 'quantity'},
+                     { data: 'price'},
+                     { data: 'totalOrderPrice'},
+                     {
+                     data: 'status',
+                     render: function (data, type, row) {
+                     // Assuming row.status contains the current status
+                     var options = ['Order Delivered', 'Pending', 'Another Status'];
+                      var dropdown = '<select class="form-select" onchange="updateStatus(' + row.purchaseOrderId + ', this.value)">';
+                
+                     options.forEach(function (option) {
+                       dropdown += '<option value="' + option + '"' + (data === option ? ' selected' : '') + '>' + option + '</option>';
+                          });
+
+                     dropdown += '</select>';
+                
+                     return dropdown;
+                    }
+                   },  // Assuming 'status' is the correct property name
+                     {
+                        data: null,
+                      render: function (data, type, row) {
+                      return '<i class="bi bi-pencil text-info" onclick="GetProductId(' + row.purchaseOrderId + ')"></i>' +
+                        '<i class="bi bi-trash text-danger" onclick="DeleteProduct(' + row.purchaseOrderId + ')"></i>';
+                   }
+
+               }
+              ]
+             });
+             },
+
+                error: function (error) {
+                    // Handle errors here
+                    console.error('Error fetching data:', error);
+                }
+            });
+        } 
+
+
+</script>
+
+
+

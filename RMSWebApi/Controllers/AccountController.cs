@@ -6,7 +6,9 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
+using System.Linq;
 using System;
+using System.Text;
 
 namespace RMSWebApi.Controllers
 {
@@ -15,27 +17,96 @@ namespace RMSWebApi.Controllers
     public class AccountController : ControllerBase
     {
         IConfiguration config = null;
-        public AccountController(IConfiguration cfg)
+        MyAppDbContext context = null;
+        public AccountController(IConfiguration cfg, MyAppDbContext ctx)
         {
-            config = cfg;   
+            config = cfg;
+            context = ctx;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="inp"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("GenerateToken")]
+        public IActionResult GenerateToken(LoginDTO inp)
+        {
+            string token = null;
+            string checkUser = null;
+
+            // Validate user credentials
+            var user = context.Users.SingleOrDefault(u => u.UserName == inp.Email && u.Password == inp.Password);
+
+            if (user != null)
+            {
+                // Check user role
+                checkUser = (from obj in context.Users
+                             join r in context.Roles on obj.RoleId equals r.RoleId
+                             where obj.UserName == inp.Email
+                             select r.RoleName).FirstOrDefault();
+
+                if (checkUser != null)
+                {
+                    var handler = new JwtSecurityTokenHandler();
+                    byte[] keyBytes = Encoding.UTF8.GetBytes(config.GetSection("JWTValue:Key").Value);
+
+                    var tokenDescriptor = new SecurityTokenDescriptor
+                    {
+                        Subject = new ClaimsIdentity(new Claim[]
+                        {
+                    new Claim(ClaimTypes.Name, user.UserName),
+                    new Claim(ClaimTypes.Role, checkUser)
+                        }),
+                        Expires = DateTime.Now.AddMinutes(20),
+                        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(keyBytes), SecurityAlgorithms.HmacSha256Signature)
+                    };
+
+                    var jwtToken = handler.CreateToken(tokenDescriptor);
+                    token = handler.WriteToken(jwtToken);
+                }
+            }
+
+            if (token != null && checkUser != null)
+            {
+                var result = new
+                {
+                    Token = token,
+                    CheckUser = checkUser
+                };
+
+                return Ok(result);
+            }
+            else
+            {
+                // Return a 401 Unauthorized status if credentials are invalid
+                return Unauthorized();
+            }
         }
         [HttpPost]
-        public string GenerateToken(LoginDTO inp)
+        [Route("RegisterUser")]
+        public IActionResult RegisterUser(UserInfo user)
         {
-            var handler = new JwtSecurityTokenHandler();
-            byte[] keyBytes = System.Text.Encoding.UTF8.GetBytes(config.GetSection("JWTValue:Key").Value);
-            var TDesc = new SecurityTokenDescriptor()
+            if (user == null)
             {
-                Subject = new System.Security.Claims.ClaimsIdentity(new Claim[] { 
-                    new Claim(ClaimTypes.Name,inp.Email),
-                    new Claim(ClaimTypes.Role,"Admin")
-                }),
-                Expires = DateTime.Now.AddMinutes(20),
-                SigningCredentials=new SigningCredentials(new SymmetricSecurityKey(keyBytes),SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = handler.CreateToken(TDesc);
-            var TokenString = handler.WriteToken(token);
-            return TokenString;
+                return BadRequest("Invalid user data");
+            }
+            // Hash the password before saving it
+            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(user.Password);
+            user.Password = hashedPassword;
+
+            context.Users.Add(user);
+            context.SaveChanges();
+
+            return Ok("User added successfully");
+
+        }
+        [HttpGet]
+        [Route("UserRoles")]
+        public IActionResult UserRoles()
+        {
+          var Result = context.Roles.ToList();
+            return Ok(Result);
         }
     }
 }
